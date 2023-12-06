@@ -1,0 +1,123 @@
+<html>
+<head>
+    <title>Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #15202B; /* Twitter dark mode background color */
+            color: white; /* Text color for dark mode */
+            background-image: url(https://images.tech.co/wp-content/uploads/2022/10/14123538/socialmedia-1-1024x512.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+        width: 80%;
+        margin: 0 auto;
+        background-color: rgba(25, 39, 52, 0.8); /* Using rgba for transparency */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+        h1 {
+            text-align: center;
+            background-color: #1DA1F2; /* Twitter brand color */
+            color: white;
+            padding: 15px 0;
+            margin-top: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #30444E; /* Textarea background color */
+            color: white; /* Text color for textarea */
+            border: 1px solid #1DA1F2; /* Textarea border color */
+            border-radius: 5px; /* Textarea border radius */
+        }
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #1DA1F2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px; /* Submit button border radius */
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .positive {
+            color: #17BF63; /* Twitter positive color */
+        }
+        .neutral {
+            color: #657786; /* Twitter neutral color */
+        }
+        .negative {
+            color: #E0245E; /* Twitter negative color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Social Media Sentiment Analysis</h1>
+        <textarea id="textInput" placeholder="Enter your text here"></textarea>
+        <button onclick="getSentiment()" class="submit-btn">Predict</button>
+        <button onclick="clearText()" class="submit-btn">Clear</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function getSentiment() {
+            const text = document.getElementById('textInput').value;
+            const data = { 'text': text };
+
+            fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.prediction === 'positive') {
+                    resultDiv.innerHTML = `Prediction: <span class="positive">Positive😀</span>, Confidence: ${data.confidence_scores[0].confidence}%`;
+                } else if (data.prediction === 'neutral') {
+                    resultDiv.innerHTML = `Prediction: <span class="neutral">Neutral😑</span>, Confidence: ${data.confidence_scores[1].confidence}%`;
+                } else if (data.prediction === 'negative') {
+                    resultDiv.innerHTML = `Prediction: <span class="negative">Negative😟</span>, Confidence: ${data.confidence_scores[2].confidence}%`;
+                } else {
+                    resultDiv.innerHTML = 'Prediction: Unknown';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = ''; // Clear textarea
+            document.getElementById('result').innerHTML = ''; // Clear result display
+        }
+    </script>
+</body>
+</html> 
+
+
+
+
+
+
+
+
+
+
